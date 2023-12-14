@@ -27,7 +27,51 @@
 #define USE_GETLINE 0
 #define USE_STRTOK 0
 
-#define HIST_FIL   int histcount;
+#define HIST_FILE ".simple_shell_history"
+#define HIST_MAX 4096
+
+typedef struct info
+{
+    char *input_buf;
+    char *input_copy;
+    char *cmd_buf;
+    char **args;
+    int arg_count;
+    char **path_dirs;
+    char *cmd_path;
+    char *cmd;
+    char **cmd_args;
+    char *input_file;
+    char *output_file;
+    int append_output;
+    int input_fd;
+    int output_fd;
+    int error_fd;
+    int command_type;
+    int sub_command;
+    int pipe_count;
+    int background;
+    char *redirect_token;
+    char *pipe_tokens[64];
+    int status;
+    int exit_code;
+    int interactive;
+    int loop;
+    int return_flag;
+    int var_flag;
+    int history_flag;
+    int alias_flag;
+    char *history_file;
+    list_t *history_list;
+    list_t *alias_list;
+    char **environ;
+    int env_changed;
+    int alias_changed;
+    int use_alias;
+    int use_history;
+    int use_env;
+    int (*builtin_func)(struct info *);
+    int histcount;
 } info_t;
 
 #define INFO_INIT \
@@ -40,44 +84,12 @@ typedef struct builtin
 } builtin_table;
 
 int hsh(info_t *, char **);
-int fiE ".simple_shell_history"
-#define HIST_MAX 4096
-
-extern char **environ;
-
-typedef struct liststr
-{
-    int num;
-    char *str;
-    struct liststr *next;
-} list_t;
-
-typedef struct passinfo
-{
-    char *arg;
-    char **argv;
-    char *path;
-    int argc;
-    unsigned int line_count;
-    int err_num;
-    int linecount_flag;
-    char *fname;
-    list_t *env;
-    list_t *history;
-    list_t *alias;
-    char **environ;
-    int env_changed;
-    int status;
-
-    char **cmd_buf;
-    int cmd_buf_type;
-    int readfd;
- nd_builtin(info_t *);
+int find_builtin(info_t *);
 void find_cmd(info_t *);
 void fork_cmd(info_t *);
 
 int is_cmd(info_t *, char *);
-char *dup_chars(chint, int);
+char *dup_chars(char *, int, int);
 char *convert_number(long int, int, int);
 void remove_comments(char *);
 
@@ -106,11 +118,11 @@ char **get_environ(info_t *);
 int _unsetenv(info_t *, char *);
 int _setenv(info_t *, char *, char *);
 
-char *get_history_file(info_t *info);
-int write_history(info_t *info);
-int read_history(info_t *info);
-int build_history_list(info_t *info, char *buf, int linecount);
-int renumber_history(info_t *info);
+char *get_history_file(info_t *);
+int write_history(info_t *);
+int read_history(info_t *);
+int build_history_list(info_t *, char *, int);
+int renumber_history(info_t *);
 
 list_t *add_node(list_t **, const char *, int);
 list_t *add_node_end(list_t **, const char *, int);
@@ -131,44 +143,4 @@ int replace_vars(info_t *);
 int replace_string(char **, char *);
 
 #endif
-r *, int, int);
-char *find_path(info_t *, char *, char *);
 
-int loophsh(char **);
-
-void _eputs(char *);
-int _eputchar(char);
-int _putfd(char c, int fd);
-int _putsfd(char *str, int fd);
-
-int _strlen(char *);
-int _strcmp(char *, char *);
-char *starts_with(const char *, const char *);
-char *_strcat(char *, char *);
-
-char *_strcpy(char *, char *);
-char *_strdup(const char *);
-void _puts(char *);
-int _putchar(char);
-
-char *_strncpy(char *, char *, int);
-char *_strncat(char *, char *, int);
-char *_strchr(char *, char);
-
-char **strtow(char *, char *);
-char **strtow2(char *, char);
-
-char *_memset(char *, char, unsigned int);
-void ffree(char **);
-void *_realloc(void *, unsigned int, unsigned int);
-
-int bfree(void **);
-
-int interactive(info_t *);
-int is_delim(char, char *);
-int _isalpha(int);
-int _atoi(char *);
-
-int _erratoi(char *);
-void print_error(info_t *, char *);
-int print_d(
