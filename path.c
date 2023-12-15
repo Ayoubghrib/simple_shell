@@ -84,3 +84,4 @@ char *find_command_path(info_t *info, char *path_str, char *command)
 	}
 	return (NULL);
 }
+

@@ -16,3 +16,4 @@ int freeAndNull(void **ptrToPointer)
     }
     return 0;
 }
+
