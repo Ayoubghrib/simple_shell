@@ -1,73 +1,73 @@
 #include "shell.h"
 
 /**
- * init_info - initializes info_t struct
- * @info: struct address
+ * initializeInfo - initializes information in info_t struct
+ * @information: struct address
  */
-void init_info(info_t *info)
+void initializeInfo(info_t *information)
 {
-    info->arg = NULL;
-    info->argv = NULL;
-    info->path = NULL;
-    info->argc = 0;
+    information->arguments = NULL;
+    information->argumentsVector = NULL;
+    information->executablePath = NULL;
+    information->argumentCount = 0;
 }
 
 /**
- * fill_info - initializes info_t struct
- * @info: struct address
- * @arg_vector: argument vector
+ * populateInfo - populates information in info_t struct
+ * @information: struct address
+ * @argumentVector: argument vector
  */
-void fill_info(info_t *info, char **arg_vector)
+void populateInfo(info_t *information, char **argumentVector)
 {
-    int i = 0;
+    int index = 0;
 
-    info->fname = arg_vector[0];
-    if (info->arg)
+    information->filename = argumentVector[0];
+    if (information->arguments)
     {
-        info->argv = strtow(info->arg, " \t");
-        if (!info->argv)
+        information->argumentsVector = strtow(information->arguments, " \t");
+        if (!information->argumentsVector)
         {
-            info->argv = malloc(sizeof(char *) * 2);
-            if (info->argv)
+            information->argumentsVector = malloc(sizeof(char *) * 2);
+            if (information->argumentsVector)
             {
-                info->argv[0] = _strdup(info->arg);
-                info->argv[1] = NULL;
+                information->argumentsVector[0] = _strdup(information->arguments);
+                information->argumentsVector[1] = NULL;
             }
         }
-        for (i = 0; info->argv && info->argv[i]; i++)
+        for (index = 0; information->argumentsVector && information->argumentsVector[index]; index++)
             ;
-        info->argc = i;
+        information->argumentCount = index;
 
-        replace_alias(info);
-        replace_vars(info);
+        replaceAlias(information);
+        replaceVariables(information);
     }
 }
 
 /**
- * release_info - frees info_t struct fields
- * @info: struct address
- * @free_all: true if freeing all fields
+ * releaseInformation - frees allocated memory in info_t struct
+ * @information: struct address
+ * @freeAll: true if freeing all fields
  */
-void release_info(info_t *info, int free_all)
+void releaseInformation(info_t *information, int freeAll)
 {
-    ffree(info->argv);
-    info->argv = NULL;
-    info->path = NULL;
-    if (free_all)
+    ffree(information->argumentsVector);
+    information->argumentsVector = NULL;
+    information->executablePath = NULL;
+    if (freeAll)
     {
-        if (!info->cmd_buf)
-            free(info->arg);
-        if (info->env)
-            free_list(&(info->env));
-        if (info->history)
-            free_list(&(info->history));
-        if (info->alias)
-            free_list(&(info->alias));
-        ffree(info->environ);
-        info->environ = NULL;
-        bfree((void **)info->cmd_buf);
-        if (info->readfd > 2)
-            close(info->readfd);
+        if (!information->commandBuffer)
+            free(information->arguments);
+        if (information->environmentVariables)
+            freeList(&(information->environmentVariables));
+        if (information->commandHistory)
+            freeList(&(information->commandHistory));
+        if (information->aliases)
+            freeList(&(information->aliases));
+        ffree(information->environment);
+        information->environment = NULL;
+        bfree((void **)information->commandBuffer);
+        if (information->readFileDescriptor > 2)
+            close(information->readFileDescriptor);
         _putchar(BUF_FLUSH);
     }
 }
