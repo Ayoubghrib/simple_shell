@@ -9,12 +9,12 @@
  */
 int exitShell(info_t *info)
 {
-	int exitStatus;
+	int exitCheck;
 
 	if (info->argv[1])  /* If there is an exit argument */
 	{
-		exitStatus = _erratoi(info->argv[1]);
-		if (exitStatus == -1)
+		exitCheck = _erratoi(info->argv[1]);
+		if (exitCheck == -1)
 		{
 			info->status = 2;
 			printError(info, "Illegal number: ");
@@ -22,10 +22,9 @@ int exitShell(info_t *info)
 			_eputchar('\n');
 			return 1;
 		}
-		info->err_num = exitStatus;
+		info->err_num = _erratoi(info->argv[1]);
 		return -2;
 	}
-
 	info->err_num = -1;
 	return -2;
 }
@@ -47,11 +46,12 @@ int changeDirectory(info_t *info)
 
 	if (!info->argv[1])
 	{
-		targetDir = _getenv(info, "HOME=");
-		if (!targetDir)
-			chdirResult = chdir((targetDir = _getenv(info, "PWD=")) ? targetDir : "/");
+		dir = _getenv(info, "HOME=");
+		if (!dir)
+			chdirResult = /* TODO: what should this be? */
+				chdir((dir = _getenv(info, "PWD=")) ? dir : "/");
 		else
-			chdirResult = chdir(targetDir);
+			chdirResult = chdir(dir);
 	}
 	else if (_strcmp(info->argv[1], "-") == 0)
 	{
@@ -62,7 +62,8 @@ int changeDirectory(info_t *info)
 			return 1;
 		}
 		_puts(_getenv(info, "OLDPWD=")), _putchar('\n');
-		chdirResult = chdir((targetDir = _getenv(info, "OLDPWD=")) ? targetDir : "/");
+		chdirResult = /* TODO: what should this be? */
+			chdir((dir = _getenv(info, "OLDPWD=")) ? dir : "/");
 	}
 	else
 		chdirResult = chdir(info->argv[1]);
